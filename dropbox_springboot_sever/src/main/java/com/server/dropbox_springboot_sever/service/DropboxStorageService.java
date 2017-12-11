@@ -13,7 +13,6 @@ public class DropboxStorageService {
     @Autowired
     private DropboxStorageRepository dropboxStorageRepository;
 
-
     public DropboxStorage addData(DropboxStorage data){
         return dropboxStorageRepository.save(data);
     }
@@ -67,5 +66,32 @@ public class DropboxStorageService {
         else {
             return false;
         }
+    }
+
+    public void deleteItem(DropboxStorage data){
+        dropboxStorageRepository.delete(data);
+    }
+
+    public void deleteDirectory(File file){
+
+        for (File childFile : file.listFiles()) {
+
+            if (childFile.isDirectory()) {
+                deleteDirectory(childFile);
+            } else {
+                if (!childFile.delete()) {
+                    System.out.println("error in recursion");
+                }
+            }
+        }
+
+        if (!file.delete()) {
+            System.out.println("error in recursion 1");
+
+        }
+    }
+
+    public void deleteFolderContent(String path){
+        dropboxStorageRepository.deleteByPathLike(path);
     }
 }

@@ -32,5 +32,10 @@ public interface DropboxStorageRepository extends CrudRepository<DropboxStorage,
 
     DropboxStorage findById(int id);
 
+    @Modifying
+    @Transactional
+    @Query("delete from DropboxStorage d where d.path LIKE :path%")
+    void deleteByPathLike(@Param("path") String path);
+
 
 }

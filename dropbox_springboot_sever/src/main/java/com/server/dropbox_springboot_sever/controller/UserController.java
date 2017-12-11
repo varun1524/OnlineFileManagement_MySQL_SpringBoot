@@ -1,13 +1,8 @@
 package com.server.dropbox_springboot_sever.controller;
 
-import com.server.dropbox_springboot_sever.entity.DropboxStorage;
-import com.server.dropbox_springboot_sever.entity.SharedDetails;
-import com.server.dropbox_springboot_sever.entity.User;
-import com.server.dropbox_springboot_sever.entity.UserProfile;
-import com.server.dropbox_springboot_sever.service.DropboxStorageService;
-import com.server.dropbox_springboot_sever.service.SharedDetailsService;
-import com.server.dropbox_springboot_sever.service.UserProfileService;
-import com.server.dropbox_springboot_sever.service.UserService;
+import com.server.dropbox_springboot_sever.ActivityType;
+import com.server.dropbox_springboot_sever.entity.*;
+import com.server.dropbox_springboot_sever.service.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +28,10 @@ public class UserController {
     DropboxStorageService dropboxStorageService;
     @Autowired
     SharedDetailsService sharedDetailsService;
+    @Autowired
+    UserActivityService userActivityService;
+    @Autowired
+    StorageActivityService storageActivityService;
 
     @PostMapping(path = "/doSignUp", consumes = MediaType.APPLICATION_JSON_VALUE) // Map ONLY POST Requests
     public ResponseEntity<?> addNewUser(@RequestBody User user) {
@@ -42,6 +41,11 @@ public class UserController {
         userProfile.setUsername(user.getUsername());
         userProfile = userProfileService.addUser(userProfile);
         System.out.println(userProfile);
+        UserActivity userActivity = new UserActivity();
+        userActivity.setUsername(user.getUsername());
+        userActivity.setActivityType(ActivityType.SIGNUP);
+        userActivity.setActivityTime(new Date());
+        userActivityService.addActivity(userActivity);
         System.out.println("user is " + user.getUsername());
         System.out.println("Saved");
         dropboxStorageService.createDirectory(user.getUsername(), "./dropboxstorage");
@@ -52,6 +56,7 @@ public class UserController {
     public ResponseEntity<?> login(@RequestBody String user, HttpSession session) {
         JSONObject jsonObject = new JSONObject(user);
         System.out.println(jsonObject);
+        String username = jsonObject.getString("username");
         System.out.println(jsonObject.getString("username"));
         List<User> userList = userService.login(jsonObject.getString("username"));
         System.out.println(userList);
@@ -60,12 +65,54 @@ public class UserController {
 
 
         if (hashedPassword.equals(pswd)) {
+            UserActivity userActivity = new UserActivity();
+            userActivity.setUsername(username);
+            userActivity.setActivityType(ActivityType.LOGIN);
+            userActivity.setActivityTime(new Date());
+            userActivityService.addActivity(userActivity);
             session.setAttribute("username", jsonObject.getString("username"));
             return new ResponseEntity((userList.get(0).getUsername()), HttpStatus.CREATED);
         } else {
             return new ResponseEntity((userList.get(0).getUsername()), HttpStatus.UNAUTHORIZED);
         }
     }
+
+    @PostMapping(path = "/getUserActivityData", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getUserActivityData(HttpSession session) {
+        if(session.getAttribute("username")!=null){
+            String username = session.getAttribute("username").toString();
+            List<UserActivity> userActivityList = userActivityService.fetchUserActivity(username);
+            if(userActivityList.size()>0){
+                return new ResponseEntity(userActivityList, HttpStatus.CREATED);
+            }
+            else {
+                return new ResponseEntity(null, HttpStatus.MOVED_PERMANENTLY);
+            }
+        }
+        else {
+            return new ResponseEntity(null, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        }
+    }
+
+    @PostMapping(path = "/getStorageActivityData", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getStorageActivityData(HttpSession session) {
+        if(session.getAttribute("username")!=null){
+            String username = session.getAttribute("username").toString();
+            List<StorageActivity> storageActivityList = storageActivityService.fetchStorageActivity(username);
+            System.out.println("storageActivityList : "+storageActivityList.size());
+            if(storageActivityList.size()>0){
+                return new ResponseEntity(storageActivityList, HttpStatus.CREATED);
+            }
+            else {
+                return new ResponseEntity(null, HttpStatus.MOVED_PERMANENTLY);
+            }
+        }
+        else {
+            return new ResponseEntity(null, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        }
+    }
+
+
 
     @PostMapping(path = "/getprofile", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> login(HttpSession session) {
@@ -147,6 +194,14 @@ public class UserController {
             dropboxStorage = dropboxStorageService.addData(dropboxStorage);
             if(dropboxStorage!=null){
                 if(dropboxStorageService.createDirectory(receivedName, userDirpath)){
+                    StorageActivity storageActivity = new StorageActivity();
+                    storageActivity.setActivityTime(new Date());
+                    storageActivity.setItemId(dropboxStorage.getId());
+                    storageActivity.setItemName(dropboxStorage.getName());
+                    storageActivity.setActivityType(ActivityType.INSERT);
+                    storageActivity.setItemType("d");
+                    storageActivity.setUsername(username);
+                    storageActivityService.addUser(storageActivity);
                     return new ResponseEntity(null, HttpStatus.CREATED);
                 }
                 else {
@@ -224,6 +279,20 @@ public class UserController {
             int updateStatus = dropboxStorageService.changeStarredStatus(itemid, status);
             System.out.println("Update Status : " + updateStatus);
             if (updateStatus == 1) {
+                StorageActivity storageActivity = new StorageActivity();
+                storageActivity.setActivityTime(new Date());
+                storageActivity.setItemId(itemid);
+                storageActivity.setItemName(dropboxStorageService.findById(itemid).getName());
+                storageActivity.setItemType(dropboxStorageService.findById(itemid).getType());
+                storageActivity.setUsername(username);
+                if(status){
+                    storageActivity.setActivityType(ActivityType.STARRED);
+                }
+                else {
+                    storageActivity.setActivityType(ActivityType.UNSTARRED);
+                }
+                storageActivityService.addUser(storageActivity);
+
                 return new ResponseEntity(null, HttpStatus.CREATED);
             } else {
                 return new ResponseEntity(null, HttpStatus.NO_CONTENT);
@@ -302,6 +371,13 @@ public class UserController {
                                 int sharedStatus = dropboxStorageService.changeSharedStatus(sharedItemId, true);
                                 if (sharedStatus == 1) {
                                     System.out.println("Shared Successfully");
+                                    StorageActivity storageActivity = new StorageActivity();
+                                    storageActivity.setActivityTime(new Date());
+                                    storageActivity.setItemId(sharedItemId);
+                                    storageActivity.setItemType(dropboxStorageService.findById(sharedItemId).getType());
+                                    storageActivity.setUsername(username);
+                                    storageActivity.setItemName(dropboxStorageService.findById(sharedItemId).getName());
+                                    storageActivity.setActivityType(ActivityType.SHARE);
                                     status = true;
                                 } else {
                                     System.out.println("Error");
