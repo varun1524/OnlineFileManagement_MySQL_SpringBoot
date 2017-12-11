@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @CrossOrigin(origins = "http://localhost:3000")
@@ -146,4 +147,172 @@ public class StorageController {
             return new ResponseEntity(null, HttpStatus.NO_CONTENT);
         }
     }
+
+    @PostMapping(path = "/createDir", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createDirectory(@RequestBody String user, HttpSession session) {
+        System.out.println(session.getAttribute("username"));
+        if (session.getAttribute("username") != null) {
+            JSONObject jsonObject = new JSONObject(user);
+            System.out.println(jsonObject);
+            String receivedPath = jsonObject.getString("dirpath");
+            String receivedName = jsonObject.getString("directoryName");
+            System.out.println("receivedPath : " + receivedPath);
+            String username = session.getAttribute("username").toString();
+            String userDirpath = "./dropboxstorage/" + username + "/" + receivedPath;
+//                if(fs.existsSync(userDirpath)){
+            String createDirpath = userDirpath;
+            System.out.println("Create Directory Path: " + createDirpath);
+
+
+            DropboxStorage dropboxStorage = new DropboxStorage();
+            dropboxStorage.setName(receivedName);
+            dropboxStorage.setPath(createDirpath);
+            dropboxStorage.setCreationtime(new Date());
+            dropboxStorage.setType("d");
+            dropboxStorage.setOwnerusername(username);
+
+            dropboxStorage = dropboxStorageService.addData(dropboxStorage);
+            if(dropboxStorage!=null){
+                if(dropboxStorageService.createDirectory(receivedName, userDirpath)){
+                    StorageActivity storageActivity = new StorageActivity();
+                    storageActivity.setActivityTime(new Date());
+                    storageActivity.setItemId(dropboxStorage.getId());
+                    storageActivity.setItemName(dropboxStorage.getName());
+                    storageActivity.setActivityType(ActivityType.INSERT);
+                    storageActivity.setItemType("d");
+                    storageActivity.setUsername(username);
+                    storageActivityService.addUser(storageActivity);
+                    return new ResponseEntity(null, HttpStatus.CREATED);
+                }
+                else {
+                    return new ResponseEntity(null, HttpStatus.MOVED_PERMANENTLY);
+                }
+            }
+            else {
+                return new ResponseEntity(null, HttpStatus.MOVED_PERMANENTLY);
+            }
+        } else {
+            System.out.println("Session Expired");
+        }
+        return new ResponseEntity(null, HttpStatus.MOVED_PERMANENTLY);
+    }
+
+    @PostMapping(path = "/getDirData", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getDirectoryData(@RequestBody String user, HttpSession session) {
+        System.out.println(session.getAttribute("username"));
+
+        JSONObject jsonObject = new JSONObject(user);
+        System.out.println(jsonObject);
+        System.out.println(jsonObject.getString("path"));
+        System.out.println("Path : " + jsonObject.getString("path"));
+//        List<DropboxStorage> storageList;
+        if (session.getAttribute("username") != null) {
+            String username = session.getAttribute("username").toString();
+            String clientPath = jsonObject.getString("path");
+            String dirpath;
+            if (clientPath.equals("") || clientPath == null || clientPath.equals("/")) {
+                dirpath = ("./dropboxstorage/" + username + "/");
+            } else {
+                dirpath = ("./dropboxstorage/" + username + "/" + clientPath);
+            }
+            System.out.println("Directory Path : " + dirpath);
+
+            // let files = fs.readdirSync(dirpath);
+            // console.log(files);
+            JSONObject jsonObj;
+//            let i = 0;
+            dirpath = dirpath.replace("//", "/");
+
+            List<DropboxStorage> storageList = dropboxStorageService.findByPath(dirpath);
+            System.out.println(storageList.size());
+            System.out.println(storageList);
+
+            if (storageList.size() > 0) {
+                return new ResponseEntity(storageList, HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity(null, HttpStatus.NO_CONTENT);
+            }
+        } else {
+            System.out.println("Session Expired");
+            return new ResponseEntity(null, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        }
+    }
+
+    @PostMapping(path = "/changestarredstatus", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> changeStarredStatus(@RequestBody String storage, HttpSession session) {
+        if (session.getAttribute("username") != null) {
+            String username = session.getAttribute("username").toString();
+//            console.log(JSON.stringify(req.body));
+            JSONObject jsonObject = new JSONObject(storage);
+            System.out.println(jsonObject);
+            int itemid = jsonObject.getInt("id");
+            boolean status = jsonObject.getBoolean("changeStatusTo");
+
+            int updateStatus = dropboxStorageService.changeStarredStatus(itemid, status);
+            System.out.println("Update Status : " + updateStatus);
+            if (updateStatus == 1) {
+                StorageActivity storageActivity = new StorageActivity();
+                storageActivity.setActivityTime(new Date());
+                storageActivity.setItemId(itemid);
+                storageActivity.setItemName(dropboxStorageService.findById(itemid).getName());
+                storageActivity.setItemType(dropboxStorageService.findById(itemid).getType());
+                storageActivity.setUsername(username);
+                if(status){
+                    storageActivity.setActivityType(ActivityType.STARRED);
+                }
+                else {
+                    storageActivity.setActivityType(ActivityType.UNSTARRED);
+                }
+                storageActivityService.addUser(storageActivity);
+
+                return new ResponseEntity(null, HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity(null, HttpStatus.NO_CONTENT);
+            }
+
+        } else {
+            System.out.println("Session Expired");
+            return new ResponseEntity(null, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        }
+    }
+
+    @PostMapping(path = "/getStarredData", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> fetchStarredData(@RequestBody String storage, HttpSession session) {
+        try {
+            if (session.getAttribute("username") != null) {
+                String username = session.getAttribute("username").toString();
+                JSONObject jsonObject = new JSONObject(storage);
+                System.out.println(jsonObject);
+                String clientPath = jsonObject.getString("path");
+                String dirpath;
+                if (clientPath == "" || clientPath == null || clientPath == "/") {
+                    dirpath = ("./dropboxstorage/" + username + "/");
+                } else {
+                    dirpath = ("./dropboxstorage/" + username + "/" + clientPath);
+                }
+                System.out.println(dirpath);
+
+                /*let files = fs.readdirSync(dirpath);
+                console.log(files);
+                let jsonObj = [];
+                let i = 0;*/
+
+                dirpath = dirpath.replace("//", "/");
+                List<DropboxStorage> storageList = dropboxStorageService.findByOwnerusernameAndStarred(username, true);
+                if (storageList.size() > 0) {
+                    return new ResponseEntity(storageList, HttpStatus.CREATED);
+                } else {
+                    return new ResponseEntity(null, HttpStatus.NO_CONTENT);
+                }
+            } else {
+                System.out.println("Session Expired");
+                return new ResponseEntity(null, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity(null, HttpStatus.MOVED_PERMANENTLY);
+//            res.status(301).send({"message" : e});
+        }
+    }
+
 }

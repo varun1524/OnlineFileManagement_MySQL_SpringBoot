@@ -1,9 +1,11 @@
+/*
 package com.server.dropbox_springboot_sever.controller;
 
 import com.server.dropbox_springboot_sever.ActivityType;
-import com.server.dropbox_springboot_sever.entity.*;
+import com.server.dropbox_springboot_sever.entity.User;
+import com.server.dropbox_springboot_sever.entity.UserActivity;
+import com.server.dropbox_springboot_sever.entity.UserProfile;
 import com.server.dropbox_springboot_sever.service.*;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,15 +13,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Controller
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(path="/users") // This means URL's start with /demo (after Application path)
-public class UserController {
+public class GroupController {
     @Autowired
     UserService userService;
     @Autowired
@@ -102,3 +104,4 @@ public class UserController {
         return new ResponseEntity(HttpStatus.OK);
     }
 }
+*/
