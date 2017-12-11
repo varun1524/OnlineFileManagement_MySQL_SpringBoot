@@ -1,17 +1,14 @@
 package com.server.dropbox_springboot_sever;
 
-import com.server.dropbox_springboot_sever.entity.DropboxStorage;
-import com.server.dropbox_springboot_sever.entity.SharedDetails;
-import com.server.dropbox_springboot_sever.entity.User;
-import com.server.dropbox_springboot_sever.service.DropboxStorageService;
-import com.server.dropbox_springboot_sever.service.SharedDetailsService;
-import com.server.dropbox_springboot_sever.service.UserService;
+import com.server.dropbox_springboot_sever.entity.*;
+import com.server.dropbox_springboot_sever.service.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -24,6 +21,10 @@ public class DropboxSpringbootSeverApplicationTests {
 	DropboxStorageService dropboxStorageService;
 	@Autowired
 	SharedDetailsService sharedDetailsService;
+	@Autowired
+	UserActivityService userActivityService;
+	@Autowired
+	StorageActivityService storageActivityService;
 
 	public void setUp(){
 
@@ -72,7 +73,7 @@ public class DropboxSpringbootSeverApplicationTests {
 
 	@Test
 	public void changeStarredStatus() {
-		int result = dropboxStorageService.changeStarredStatus(1, true);
+		int result = dropboxStorageService.changeStarredStatus(1, !(dropboxStorageService.findById(1).isStarred()));
 		System.out.println("result : "+result);
 		if(result==1){
 			assert true;
@@ -80,7 +81,6 @@ public class DropboxSpringbootSeverApplicationTests {
 		else {
 			assert false;
 		}
-//		assert
 	}
 
 	@Test
@@ -148,7 +148,7 @@ public class DropboxSpringbootSeverApplicationTests {
 
 	@Test
 	public void createDirectory() {
-		if(dropboxStorageService.createDirectory("test","./test")) {
+		if(dropboxStorageService.createDirectory("testDir","./test")) {
 			assert true;
 		}
 		else {
@@ -156,5 +156,39 @@ public class DropboxSpringbootSeverApplicationTests {
 		}
 	}
 
+	@Test
+	public void deleteDirectory() {
+		File deleteFile = new File("./test/testDir");
+		dropboxStorageService.deleteDirectory(deleteFile);
+		if(!deleteFile.exists()) {
+			assert true;
+		}
+		else {
+			assert false;
+		}
+	}
 
+	@Test
+	public void fetchUserActivity(){
+		List<UserActivity> userActivityList =  userActivityService.fetchUserActivity("varun@yahoo.com");
+		System.out.println(userActivityList.size());
+		if(userActivityList!=null){
+			assert true;
+		}
+		else {
+			assert false;
+		}
+	}
+
+	@Test
+	public void fetchStorageActivity(){
+		List<StorageActivity> storageActivityList =  storageActivityService.fetchStorageActivity("varun@yahoo.com");
+		System.out.println(storageActivityList.size());
+		if(storageActivityList!=null){
+			assert true;
+		}
+		else {
+			assert false;
+		}
+	}
 }
