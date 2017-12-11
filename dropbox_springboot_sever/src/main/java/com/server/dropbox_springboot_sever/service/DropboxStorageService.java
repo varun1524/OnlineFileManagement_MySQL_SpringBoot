@@ -75,7 +75,6 @@ public class DropboxStorageService {
     public void deleteDirectory(File file){
 
         for (File childFile : file.listFiles()) {
-
             if (childFile.isDirectory()) {
                 deleteDirectory(childFile);
             } else {
@@ -87,7 +86,6 @@ public class DropboxStorageService {
 
         if (!file.delete()) {
             System.out.println("error in recursion 1");
-
         }
     }
 

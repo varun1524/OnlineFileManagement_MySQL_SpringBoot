@@ -79,19 +79,18 @@ public class UserController {
 
     //TODO : COnvert it to GetMapping Later
     @PostMapping(path = "/getSession", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpSession getSession(HttpSession session) {
+    public ResponseEntity<?> getSession(HttpSession session) {
         // This returns a JSON with the users
         JSONObject jsonObject = new JSONObject();
         String status;
         System.out.println(session.getAttribute("username"));
         if (session.getAttribute("username") == null) {
             status = "301";
+            return new ResponseEntity(null, HttpStatus.MOVED_PERMANENTLY);
         } else {
             jsonObject.append("username", session.getAttribute("username"));
-            status = "201";
+            return new ResponseEntity(null, HttpStatus.CREATED);
         }
-//        System.out.println(jsonObject);
-        return session;
     }
 
     @PostMapping(value = "/doLogout")
