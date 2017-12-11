@@ -24,6 +24,26 @@ public class DropboxStorage {
 
     private String ownerusername;
 
+    private boolean starred = false;
+
+    public boolean isStarred() {
+        return starred;
+    }
+
+    public void setStarred(boolean starred) {
+        this.starred = starred;
+    }
+
+    public boolean isSharedstatus() {
+        return sharedstatus;
+    }
+
+    public void setSharedstatus(boolean sharedstatus) {
+        this.sharedstatus = sharedstatus;
+    }
+
+    private boolean sharedstatus = false;
+
     public String getName() {
         return name;
     }
@@ -38,7 +58,6 @@ public class DropboxStorage {
 
     public void setName(String name) {
         this.name = name;
-
     }
 
     public String getType() {

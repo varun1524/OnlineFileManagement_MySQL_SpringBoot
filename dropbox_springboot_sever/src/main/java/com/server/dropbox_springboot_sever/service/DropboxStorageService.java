@@ -5,6 +5,7 @@ import com.server.dropbox_springboot_sever.repository.DropboxStorageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.List;
 
 @Service
@@ -13,11 +14,58 @@ public class DropboxStorageService {
     private DropboxStorageRepository dropboxStorageRepository;
 
 
-    public void addData(DropboxStorage data){
-        dropboxStorageRepository.save(data);
+    public DropboxStorage addData(DropboxStorage data){
+        return dropboxStorageRepository.save(data);
     }
 
-    public List<DropboxStorage> findByPath(String username){
-        return dropboxStorageRepository.findByPath(username);
+    public List<DropboxStorage> findByPath(String path){
+        return dropboxStorageRepository.findByPath(path);
+    }
+
+    public int changeStarredStatus(int itemId, boolean status){
+        return dropboxStorageRepository.updateStarredStatus(itemId, status);
+    }
+
+    public int changeSharedStatus(int itemId, boolean status){
+        return dropboxStorageRepository.updateSharedStatus(itemId, status);
+    }
+
+    public List<DropboxStorage> findByOwnerusernameAndStarred(String username, boolean status){
+        return dropboxStorageRepository.findByOwnerusernameAndStarred(username, status);
+    }
+
+    public List<DropboxStorage> findByOwnerusernameAndSharedstatus(String username, boolean status){
+        return dropboxStorageRepository.findByOwnerusernameAndSharedstatus(username, status);
+    }
+
+    public DropboxStorage findById(int id){
+        return dropboxStorageRepository.findById(id);
+    }
+
+    public boolean createDirectory(String dirName, String path) {
+        System.out.println("in create directory");
+        File folder = null;
+        String createDirPath = path + "/" + dirName;
+        createDirPath.replace("//","/");
+        if ("".equalsIgnoreCase(path)) {
+            System.out.println("in if");
+            folder = new File(dirName);
+        } else {
+            System.out.println("in else");
+            folder = new File(createDirPath);
+        }
+
+        if (!folder.exists()) {
+            if (folder.mkdirs()) {
+                System.out.println("Done");
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
     }
 }
