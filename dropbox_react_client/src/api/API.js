@@ -287,10 +287,30 @@ export const getprofile = () =>
             return error;
     });
 
-export const getActivityData = () =>
-    fetch (`${api}/users/getActivityData`,
+export const getUserActivityData = () =>
+    fetch (`${api}/users/getUserActivityData`,
         {
             method: 'POST',
+            headers: {
+                ...headers,
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        }).then(res => {
+        return res;
+    }).catch(error => {
+        console.log("Error: " + error);
+        return error;
+    });
+
+export const getStorageActivityData = () =>
+    fetch (`${api}/users/getStorageActivityData`,
+        {
+            method: 'POST',
+            headers: {
+                ...headers,
+                'Content-Type': 'application/json'
+            },
             credentials: 'include'
         }).then(res => {
         return res;
@@ -300,7 +320,7 @@ export const getActivityData = () =>
     });
 
 export const deleteContent = (payload) =>
-    fetch (`${api}/users/deleteContent`,
+    fetch (`${api}/file/deleteContent`,
         {
             method: 'POST',
             headers: {

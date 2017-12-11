@@ -11,102 +11,120 @@ class ShowActivity extends Component{
 
     formatActivity=((item)=>{
         console.log(item);
-        if(item.activitytype==="signup"){
+        if(item.activityType==="signup"){
             return(
                 <div>
-                    Created account on {item.activitytime.replace("T"," ").replace("Z","")}
+                    Created account on {new Date(item.activityTime).toLocaleString()}
                 </div>
             )
         }
-        else if(item.activitytype==="login"){
+        else if(item.activityType==="login"){
             return(
                 <div>
-                    Last time logged in on {item.activitytime.replace("T"," ").replace("Z","")}
+                    Last time logged in on {new Date(item.activityTime).toLocaleString()}
                 </div>
             )
         }
-        else if(item.activitytype==="insert"){
-            if(item.type==="f")
+        else if(item.activityType==="insert"){
+            console.log(item);
+            if(item.itemType==="f")
             {
                 return(
                     <div>
-                        Inserted File {item.name} on {item.activitytime.replace("T"," ").replace("Z","")}
+                        Inserted File {item.itemName} on {new Date(item.activityTime).toLocaleString()}
                     </div>
                 )
             }
-            else if(item.type==="d") {
+            else if(item.itemType==="d") {
                 return(
                     <div>
-                        Inserted Directory {item.name} on {item.activitytime.replace("T"," ").replace("Z","")}
+                        Inserted Directory {item.itemName} on {new Date(item.activityTime).toLocaleString()}
                     </div>
                 )
             }
 
         }
-        else if(item.activitytype==="starred"){
-            if(item.type==="f")
+        else if(item.activityType==="starred"){
+            if(item.itemType==="f")
             {
                 return(
                     <div>
-                        Starred File {item.name} on {item.activitytime.replace("T"," ").replace("Z","")}
+                        Starred File {item.itemName} on {new Date(item.activityTime).toLocaleString()}
                     </div>
                 )
             }
-            else if(item.type==="d") {
+            else if(item.itemType==="d") {
                 return(
                     <div>
-                        Starred Directory {item.name} on {item.activitytime.replace("T"," ").replace("Z","")}
+                        Starred Directory {item.itemName} on {new Date(item.activityTime).toLocaleString()}
                     </div>
                 )
             }
         }
-        else if(item.activitytype==="unstarred"){
-            if(item.type==="f")
+        else if(item.activityType==="unstarred"){
+            if(item.itemType==="f")
             {
                 return(
                     <div>
-                        Unstarred File {item.name} on {item.activitytime.replace("T"," ").replace("Z","")}
+                        Unstarred File {item.itemName} on {new Date(item.activityTime).toLocaleString()}
                     </div>
                 )
             }
-            else if(item.type==="d") {
+            else if(item.itemType==="d") {
                 return(
                     <div>
-                        Unstarred Directory {item.name} on {item.activitytime.replace("T"," ").replace("Z","")}
+                        Unstarred Directory {item.itemName} on {new Date(item.activityTime).toLocaleString()}
                     </div>
                 )
             }
         }
-        else if(item.activitytype==="share"){
-            if(item.type==="f")
+        else if(item.activityType==="share"){
+            if(item.itemType==="f")
             {
                 return(
                     <div>
-                        Shared File {item.name} on {item.activitytime.replace("T"," ").replace("Z","")}
+                        Shared File {item.itemName} on {new Date(item.activityTime).toLocaleString()}
                     </div>
                 )
             }
-            else if(item.type==="d") {
+            else if(item.itemType==="d") {
                 return(
                     <div>
-                        Shared Directory {item.name} on {item.activitytime.replace("T"," ").replace("Z","")}
+                        Shared Directory {item.itemName} on {new Date(item.activityTime).toLocaleString()}
                     </div>
                 )
             }
         }
-        else if(item.activitytype==="unshared"){
-            if(item.type==="f")
+        else if(item.activityType==="unshared"){
+            if(item.itemType==="f")
             {
                 return(
                     <div>
-                        Unshared File {item.name} on {item.activitytime.replace("T"," ").replace("Z","")}
+                        Unshared File {item.itemName} on {new Date(item.activityTime).toLocaleString()}
                     </div>
                 )
             }
-            else if(item.type==="d") {
+            else if(item.itemType==="d") {
                 return(
                     <div>
-                        Unshared Directory {item.name} on {item.activitytime.replace("T"," ").replace("Z","")}
+                        Unshared Directory {item.itemName} on {new Date(item.activityTime).toLocaleString()}
+                    </div>
+                )
+            }
+        }
+        else if(item.activityType==="delete"){
+            if(item.itemType==="f")
+            {
+                return(
+                    <div>
+                        Deleted File {item.itemName} on {new Date(item.activityTime).toLocaleString()}
+                    </div>
+                )
+            }
+            else if(item.itemType==="d") {
+                return(
+                    <div>
+                        Deleted Directory {item.itemName} on {new Date(item.activityTime).toLocaleString()}
                     </div>
                 )
             }

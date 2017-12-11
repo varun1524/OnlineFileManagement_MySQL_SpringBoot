@@ -10,6 +10,7 @@ class Activity extends Component{
         super();
         this.state = {
             activityData: [],
+            storageActivityData: [],
             message: ""
         };
     }
@@ -29,12 +30,35 @@ class Activity extends Component{
     });
 
     getActivityData = (()=>{
-        API.getActivityData().then((response) =>{
+        API.getUserActivityData().then((response) =>{
             if(response.status===201){
                 response.json().then((data)=>{
                     this.setState({
                         ...this.state,
                         activityData:data
+                    });
+                });
+            }
+            else if(response.status===203){
+                console.log("Session Expired. Redirecting to Login");
+                this.props.handlePageChange("/home/signup");
+            }
+            else if(response.status===301){
+                console.log("Failed to fetch activity content");
+                this.setState({
+                    ...this.state,
+                    activityData:[],
+                    message:"Failed to fetch activity data"
+                });
+            }
+        });
+
+        API.getStorageActivityData().then((response) =>{
+            if(response.status===201){
+                response.json().then((data)=>{
+                    this.setState({
+                        ...this.state,
+                        storageActivityData:data
                     });
                 });
             }
@@ -77,6 +101,14 @@ class Activity extends Component{
                                     </thead>
                                     {
                                         this.state.activityData.map((item, index) => {
+                                            return(<ShowActivity
+                                                key={index}
+                                                item={item}
+                                            />)
+                                        })
+                                    }
+                                    {
+                                        this.state.storageActivityData.map((item, index) => {
                                             return(<ShowActivity
                                                 key={index}
                                                 item={item}

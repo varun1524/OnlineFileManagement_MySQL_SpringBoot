@@ -24,11 +24,8 @@ class File extends Component {
     }
 
     handleDelete = ((item)=>{
-        let itemid = {
-            id : item.id
-        };
-        API.deleteContent(itemid).then((response)=>{
-            if(response.status===201){
+        API.deleteContent(item).then((response)=>{
+            if(response.status===200){
                 this.setState({
                     ...this.state,
                     message:"Deleted Successfuly"
