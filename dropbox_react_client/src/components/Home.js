@@ -34,21 +34,17 @@ class Home extends Component {
         console.log(data);
         API.changeStarredStatus(data).then((response)=>{
             if(response.status===201){
-                response.json().then((data) => {
-                    let msg="";
-                    if(item.starred){
-                        msg= "Removed from Favourite";
-                    }
-                    else {
-                        msg= "Added to Favourite";
-                    }
-
-                    this.setState({
-                        message: msg
-                    });
-
-                    this.fetchStarredData();
+                let msg = "";
+                if(item.starred){
+                    msg= "Removed from Favourite";
+                }
+                else {
+                    msg= "Added to Favourite";
+                }
+                this.setState({
+                    message: msg
                 });
+                this.fetchStarredData();
             }
             else if(response.status===203){
                 this.setState({
@@ -232,51 +228,50 @@ class Home extends Component {
     });
 
     fetchDataSharedByUser = (()=>{
-        this.setState((state) => {
 
-            API.fetchDataSharedByUser().then((response) => {
-                if (response.status === 204) {
+        API.fetchDataSharedByUser().then((response) => {
+            if (response.status === 204) {
+                this.setState({
+                    ...this.state,
+                    sharedByMeData: [],
+                    message: "Directory is Empty",
+                });
+                // state.dirpath = state.dirpath + path.path;
+            }
+            else if(response.status === 200) {
+                response.json().then((data) => {
+                    console.log(data);
                     this.setState({
                         ...this.state,
-                        sharedByMeData: [],
-                        message: "Directory is Empty",
+                        sharedByMeData: data,
+                        message: "Directory Data Received",
                     });
+                    // this.props.redirectToFile()
                     // state.dirpath = state.dirpath + path.path;
-                }
-                else if(response.status === 201) {
-                    response.json().then((data) => {
-                        console.log(data);
-                        this.setState({
-                            ...this.state,
-                            sharedByMeData: data,
-                            message: "Directory Data Received",
-                        });
-                        // this.props.redirectToFile()
-                        // state.dirpath = state.dirpath + path.path;
-                    });
-                }
-                else if (response.status === 301) {
-                    this.setState({
-                        ...this.state,
-                        message: "Error while loading directories"
-                    });
-                }
-                else if (response.status === 203) {
-                    this.setState({
-                        ...this.state,
-                        message: "Session Expired. Login Again"
-                    });
-                    this.props.handlePageChange("/");
-                }
-                else {
-                    console.log("Error");
-                }
-            });
+                });
+            }
+            else if (response.status === 301) {
+                this.setState({
+                    ...this.state,
+                    message: "Error while loading directories"
+                });
+            }
+            else if (response.status === 203) {
+                this.setState({
+                    ...this.state,
+                    message: "Session Expired. Login Again"
+                });
+                this.props.handlePageChange("/");
+            }
+            else {
+                console.log("Error");
+            }
         });
     });
 
     fetchDataSharedWithUser = (()=>{
         API.fetchDataSharedWithUser().then((response) => {
+            console.log(response.status);
             if (response.status === 204) {
                 this.setState({
                     ...this.state,
@@ -285,7 +280,7 @@ class Home extends Component {
                 });
                 // state.dirpath = state.dirpath + path.path;
             }
-            else if(response.status === 201) {
+            else if(response.status === 200) {
                 response.json().then((data) => {
                     console.log(data);
                     this.setState({
@@ -408,19 +403,19 @@ class Home extends Component {
 
 
     componentWillMount(){
-        API.getSession().then((response)=>{
-            if(response.status===201){
-                this.fetchStarredData();
-                this.fetchDataSharedByUser();
-                this.fetchDataSharedWithUser();
-            }
-            else if(response.status===203){
-                this.props.handlePageChange("/");
-            }
-            else{
-                console.log("Error");
-            }
-        });
+        // API.getSession().then((response)=>{
+        //     if(response.status===201){
+        this.fetchStarredData();
+        this.fetchDataSharedByUser();
+        this.fetchDataSharedWithUser();
+        // }
+        // else if(response.status===203){
+        //     this.props.handlePageChange("/");
+        // }
+        // else{
+        //     console.log("Error");
+        // }
+        // });
     }
 
     componentDidMount(){

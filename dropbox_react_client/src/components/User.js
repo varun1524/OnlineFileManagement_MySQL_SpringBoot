@@ -6,7 +6,6 @@ import Home from './Home';
 import File from './File';
 import Profile from './Profile';
 import Activity from './Activity';
-import EditProfile from './EditProfile';
 import Group from './Group';
 
 class User extends Component {
@@ -230,14 +229,6 @@ class User extends Component {
                                     <Route path="/user/profile" render={() => (
                                         <div>
                                             <Profile
-                                                username={this.props.username}
-                                                handlePageChange={this.props.handlePageChange}
-                                            />
-                                        </div>
-                                    )}/>
-                                    <Route path="/user/editprofile" render={() => (
-                                        <div>
-                                            <EditProfile
                                                 username={this.props.username}
                                                 handlePageChange={this.props.handlePageChange}
                                             />

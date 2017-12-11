@@ -96,7 +96,7 @@ class MainPage extends Component {
     handleLogout=(()=>{
         API.doLogout()
             .then((status) => {
-                if(status===201){
+                if(status===200){
                     sessionStorage.removeItem('username');
                     this.setState({
                         ...this.state,

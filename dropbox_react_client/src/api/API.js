@@ -5,7 +5,7 @@ const headers = {
 };
 
 export const doSignUp = (payload) =>
-    fetch (`${api}/signup/doSignUp`,
+    fetch (`${api}/users/doSignUp`,
         {
             method: 'POST',
             headers: {
@@ -86,14 +86,17 @@ export const getDirectoryData = (payload) =>
         });
 
 export const uploadFile = (payload) =>
-    fetch(`${api}/users/upload`, {
-        method: 'POST',
-        body: payload,
-        credentials:'include'
-    }).then(res => {
-        return res.status;
+    fetch(`${api}/file/upload`, {
+            method: 'POST',
+            credentials:'include',
+            body: payload
+        }
+    ).then(res => {
+        console.log("My response in upload file is ",JSON.stringify(res));
+        return res;
     }).catch(error => {
-        console.log("This is error");
+        console.log(payload);
+        console.log("This is error while file upload ", error.message);
         return error;
     });
 
@@ -271,7 +274,11 @@ export const changeProfile = (payload) =>
 
 export const getprofile = () =>
     fetch (`${api}/users/getprofile`, {
-        method: 'GET',
+        method: 'POST',
+        headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+        },
         credentials:'include'
     }).then(res => {
         return res;

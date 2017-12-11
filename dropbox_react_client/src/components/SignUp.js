@@ -7,8 +7,8 @@ class SignUp extends Component{
     constructor(){
         super();
         this.state = {
-            firstname: "",
-            lastname: "",
+            fname: "",
+            lname: "",
             username: "",
             password: ""
         };

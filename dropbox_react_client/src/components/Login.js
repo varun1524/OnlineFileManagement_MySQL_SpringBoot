@@ -5,7 +5,7 @@ import SignUp from "./SignUp";
 class Login extends Component{
 
     state = {
-        username:"",
+        email:"",
         password:""
     };
 
