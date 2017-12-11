@@ -191,6 +191,12 @@ class User extends Component {
                                                 this.props.handlePageChange("/user/file");
                                             })}>Files</button>
                                         </div>
+
+                                        <div className="row">
+                                            <button className="btn-link" onClick={(()=>{
+                                                this.props.handlePageChange("/user/group");
+                                            })}>Groups</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -216,7 +222,7 @@ class User extends Component {
                                             />
                                         </div>
                                     )}/>
-                                    <Route path="/user/groups" render={() => (
+                                    <Route path="/user/group" render={() => (
                                         <div>
                                             <Group
                                                 username={this.props.username}

@@ -71,7 +71,7 @@ export const doLogout = (payload) =>
         });
 
 export const getDirectoryData = (payload) =>
-    fetch(`${api}/users/getDirData`,{
+    fetch(`${api}/file/getDirData`,{
         method:'POST',
         headers: {
             ...headers,
@@ -101,7 +101,7 @@ export const uploadFile = (payload) =>
     });
 
 export const createDirectory = (payload) =>
-    fetch(`${api}/users/createDir`, {
+    fetch(`${api}/file/createDir`, {
         method: 'POST',
         headers: {
             ...headers,
@@ -117,26 +117,9 @@ export const createDirectory = (payload) =>
             return error;
         });
 
-
-export const sendDirectorayPath = (payload) =>
-    fetch(`${api}/users/setdirPath`, {
-        method: 'POST',
-        headers: {
-            ...headers,
-            'Content-Type': 'application/json'
-        },
-        body:JSON.stringify(payload),
-        credentials:'include'
-    }).then(res => {
-        return res;
-    })
-        .catch(error => {
-            console.log("This is error");
-            return error;
-        });
 
 export const doShareData = (payload) =>
-    fetch (`${api}/users/share`,
+    fetch (`${api}/share/share`,
         {
             method: 'POST',
             headers: {
@@ -170,7 +153,7 @@ export const doRemoveSharing = (payload) =>
     });
 
 export const changeStarredStatus = (payload) =>
-    fetch (`${api}/users/changestarredstatus`,
+    fetch (`${api}/file/changestarredstatus`,
         {
             method: 'POST',
             headers: {
@@ -187,7 +170,7 @@ export const changeStarredStatus = (payload) =>
     });
 
 export const fetchStarredData = (payload) =>
-    fetch (`${api}/users/getStarredData`,
+    fetch (`${api}/file/getStarredData`,
         {
             method: 'POST',
             headers: {
@@ -204,7 +187,7 @@ export const fetchStarredData = (payload) =>
     });
 
 export const fetchDataSharedByUser = (payload) =>
-    fetch (`${api}/users/getDataSharedByUser`,
+    fetch (`${api}/share/getDataSharedByUser`,
         {
             method: 'POST',
             headers: {
@@ -222,7 +205,7 @@ export const fetchDataSharedByUser = (payload) =>
 
 
 export const fetchDataSharedWithUser = (payload) =>
-    fetch (`${api}/users/fetchDataSharedWithUser`,
+    fetch (`${api}/share/fetchDataSharedWithUser`,
         {
             method: 'POST',
             headers: {
@@ -239,7 +222,7 @@ export const fetchDataSharedWithUser = (payload) =>
     });
 
 export const accessSharedData = (payload) =>
-    fetch (`${api}/users/accessSharedData`,
+    fetch (`${api}/share/accessSharedData`,
         {
             method: 'POST',
             headers: {
@@ -256,7 +239,7 @@ export const accessSharedData = (payload) =>
     });
 
 export const changeProfile = (payload) =>
-    fetch (`${api}/users/changeProfile`,
+    fetch (`${api}/profile/changeProfile`,
         {
             method: 'POST',
             headers: {
@@ -273,7 +256,7 @@ export const changeProfile = (payload) =>
     });
 
 export const getprofile = () =>
-    fetch (`${api}/users/getprofile`, {
+    fetch (`${api}/profile/getprofile`, {
         method: 'POST',
         headers: {
             ...headers,
@@ -288,7 +271,7 @@ export const getprofile = () =>
     });
 
 export const getUserActivityData = () =>
-    fetch (`${api}/users/getUserActivityData`,
+    fetch (`${api}/activity/getUserActivityData`,
         {
             method: 'POST',
             headers: {
@@ -304,7 +287,7 @@ export const getUserActivityData = () =>
     });
 
 export const getStorageActivityData = () =>
-    fetch (`${api}/users/getStorageActivityData`,
+    fetch (`${api}/activity/getStorageActivityData`,
         {
             method: 'POST',
             headers: {
@@ -318,6 +301,23 @@ export const getStorageActivityData = () =>
         console.log("Error: " + error);
         return error;
     });
+
+export const createGroup = (payload) =>
+    fetch(`${api}/group/creategroup`, {
+        method: 'POST',
+        headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+        },
+        credentials:'include',
+        body : JSON.stringify(payload),
+    }).then(res => {
+        return res;
+    })
+        .catch(error => {
+            console.log("This is error");
+            return error;
+        });
 
 export const deleteContent = (payload) =>
     fetch (`${api}/file/deleteContent`,
@@ -333,6 +333,170 @@ export const deleteContent = (payload) =>
         return res;
     }).catch(error => {
         console.log("Error: " + error);
+        return error;
+    });
+
+export const deleteGroup = (payload) =>
+    fetch (`${api}/group/deletegroup`,
+        {
+            method: 'POST',
+            headers: {
+                ...headers,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload),
+            credentials: 'include'
+        }).then(res => {
+        return res;
+    }).catch(error => {
+        console.log("Error: " + error);
+        return error;
+    });
+
+export const deleteMember = (payload) =>
+    fetch (`${api}/group/deletemember`,
+        {
+            method: 'POST',
+            headers: {
+                ...headers,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload),
+            credentials: 'include'
+        }).then(res => {
+        return res;
+    }).catch(error => {
+        console.log("Error: " + error);
+        return error;
+    });
+
+export const deletecontentfromgroup = (payload) =>
+    fetch (`${api}/group/deletecontent`,
+        {
+            method: 'POST',
+            headers: {
+                ...headers,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload),
+            credentials: 'include'
+        }).then(res => {
+        return res;
+    }).catch(error => {
+        console.log("Error: " + error);
+        return error;
+    });
+
+
+
+export const getGroups = () =>
+    fetch (`${api}/group/getgroups`,
+        {
+            method: 'POST',
+            headers: {
+                ...headers,
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        }).then(res => {
+        return res;
+    }).catch(error => {
+        console.log("Error: " + error);
+        return error;
+    });
+
+export const getGroupData = (payload) =>
+    fetch(`${api}/group/getgroupdata`,{
+        method:'POST',
+        headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+        },
+        credentials:'include',
+        body: JSON.stringify(payload)
+    }).then(res => {return res;})
+        .catch(error => {
+            console.log("This is error.");
+            return error;
+        });
+
+export const createDirectoryInGroup = (payload) =>
+    fetch(`${api}/group/createDir`, {
+        method: 'POST',
+        headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+        },
+        body:JSON.stringify(payload),
+        credentials:'include'
+    }).then(res => {
+        return res;
+    })
+        .catch(error => {
+            console.log("This is error");
+            return error;
+        });
+
+export const fetchGroupAccessDetails = (payload) =>
+    fetch(`${api}/group/fetchgroupaccessdetails`,{
+        method:'POST',
+        headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+        },
+        credentials:'include',
+        body: JSON.stringify(payload)
+    }).then(res => {return res;})
+        .catch(error => {
+            console.log("This is error.");
+            return error;
+        });
+
+
+export const getGroupMembers = (payload) =>
+    fetch(`${api}/group/getgroupmembers`,{
+        method:'POST',
+        headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+        },
+        credentials:'include',
+        body: JSON.stringify(payload)
+    }).then(res => {return res;})
+        .catch(error => {
+            console.log("This is error.");
+            return error;
+        });
+
+export const uploadFileInGroup = (payload) =>
+    fetch(`${api}/group/upload`, {
+        method: 'POST',
+        headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload),
+        credentials:'include'
+    }).then(res => {
+        return res;
+    }).catch(error => {
+        console.log("This is error");
+        return error;
+    });
+
+export const addMembersInGroup = (payload) =>
+    fetch(`${api}/group/addmember`, {
+        method: 'POST',
+        headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload),
+        credentials:'include'
+    }).then(res => {
+        return res;
+    }).catch(error => {
+        console.log("This is error");
         return error;
     });
 

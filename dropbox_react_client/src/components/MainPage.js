@@ -103,7 +103,7 @@ class MainPage extends Component {
                         isLoggedIn: false,
                         message: "User Logged out"
                     });
-                    this.handlePageChange("/");
+                    this.handlePageChange("/home/login");
                 }
                 else if(status===401){
                     this.setState({

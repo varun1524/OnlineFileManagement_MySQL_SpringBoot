@@ -142,15 +142,7 @@ class ShowActivity extends Component{
 
                 <td className="text-justify">
                     {this.formatActivity(item)}
-                    {/*{item.activitytype}*/}
-                    {/*{item.activitytime}*/}
-                    {/*{item.name}*/}
                 </td>
-                {/*{item.name && ( //Just a change here*/}
-                    {/*<td className="text-justify">*/}
-                        {/*{item.name}*/}
-                    {/*</td>*/}
-                {/*)}*/}
             </tr>
             </tbody>
         );
